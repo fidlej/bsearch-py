@@ -67,7 +67,9 @@ class _LinesAsBytes(object):
 
 def _read_last_line(stream, stream_size):
     bufsize = 8192
-    for pos in xrange(stream_size - bufsize, 0, -2 * bufsize):
+    # Read by big steps and also from 0.
+    for pos in xrange(stream_size - bufsize, -2 * bufsize, -2 * bufsize):
+        pos = max(0, pos)
         stream.seek(pos)
         data = stream.read(bufsize)
         index = data.rfind("\n")
