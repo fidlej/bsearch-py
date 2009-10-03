@@ -37,6 +37,8 @@ class Test(unittest.TestCase):
                 bsearch._bsearch_stream(self.stream, self.stream_size, "A"))
         self.assertEquals(["B next line\n"],
                 bsearch._bsearch_stream(self.stream, self.stream_size, "B n"))
+        self.assertEquals(DATA.splitlines(True),
+                bsearch._bsearch_stream(self.stream, self.stream_size, ""))
 
 if __name__ == "__main__":
     unittest.main()

@@ -20,6 +20,9 @@ def _parse_args():
     return options, args
 
 def bsearch(filename, prefix):
+    """Finds all lines that starts with the prefix.
+    The given file should be already sorted.
+    """
     stream_size = os.path.getsize(filename)
     with open(filename, "rb") as stream:
         return _bsearch_stream(stream, stream_size, prefix)
@@ -30,6 +33,7 @@ def _bsearch_stream(stream, stream_size, prefix):
 
     results = []
     line = items[index]
+    # Empty prefix is also supported
     while line and line.startswith(prefix):
         results.append(line)
         line = stream.readline()
