@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """\
-Usage: %prog PREFIX FILE
+Usage: %prog SORTED_FILE PREFIX
 Finds lines with the given prefix in the sorted file.
 """
 
@@ -14,10 +14,8 @@ def _parse_args():
     parser = optparse.OptionParser(__doc__)
 
     options, args = parser.parse_args()
-    if len(args) == 0:
-        parser.error("Specify a prefix!")
     if len(args) != 2:
-        parser.error("Specify one sorted file!")
+        parser.error("Specify a sorted file and a prefix!")
 
     return options, args
 
@@ -82,7 +80,7 @@ def _read_last_line(stream, stream_size):
 
 def main():
     options, args = _parse_args()
-    prefix, filename = args
+    filename, prefix = args
     lines = bsearch(prefix, filename)
     for line in lines:
         print line,
