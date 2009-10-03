@@ -6,10 +6,10 @@ from StringIO import StringIO
 import bsearch
 
 DATA = """\
-a first line
-aa second line
-b next line
-z last line"""
+A first line
+AA second line
+B next line
+Z last line"""
 
 class Test(unittest.TestCase):
     def setUp(self):
@@ -21,7 +21,16 @@ class Test(unittest.TestCase):
         self.assertEquals("first line\n", self.stream.readline())
 
         line = bsearch._read_last_line(self.stream, self.stream_size)
-        self.assertEquals("z last line", line)
+        self.assertEquals("Z last line", line)
+
+    def test_getitem(self):
+        items = bsearch._LinesAsBytes(self.stream, self.stream_size)
+        self.assertEquals("A first line\n", items[0])
+        self.assertEquals("AA second line\n", items[1])
+        self.assertEquals("B next line\n", items[DATA.index("B") - 1])
+        self.assertEquals("Z last line", items[DATA.index("B")])
+        self.assertEquals("Z last line", items[self.stream_size -4])
+        self.assertEquals("Z last line", items[self.stream_size -1])
 
 
 if __name__ == "__main__":
