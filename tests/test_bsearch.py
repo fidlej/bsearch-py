@@ -32,6 +32,11 @@ class Test(unittest.TestCase):
         self.assertEquals("Z last line", items[self.stream_size -4])
         self.assertEquals("Z last line", items[self.stream_size -1])
 
+    def test_bsearch(self):
+        self.assertEquals(["A first line\n", "AA second line\n"],
+                bsearch._bsearch_stream(self.stream, self.stream_size, "A"))
+        self.assertEquals(["B next line\n"],
+                bsearch._bsearch_stream(self.stream, self.stream_size, "B n"))
 
 if __name__ == "__main__":
     unittest.main()

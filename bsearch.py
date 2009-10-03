@@ -19,17 +19,20 @@ def _parse_args():
 
     return options, args
 
-def bsearch(prefix, filename):
+def bsearch(filename, prefix):
     stream_size = os.path.getsize(filename)
     with open(filename, "rb") as stream:
-        items = _LinesAsBytes(stream, stream_size)
-        index = bisect.bisect_left(items, prefix)
+        return _bsearch_stream(stream, stream_size, prefix)
 
-        results = []
-        line = items[index]
-        while line and line.startswith(prefix):
-            results.append(line)
-            line = stream.readline()
+def _bsearch_stream(stream, stream_size, prefix):
+    items = _LinesAsBytes(stream, stream_size)
+    index = bisect.bisect_left(items, prefix)
+
+    results = []
+    line = items[index]
+    while line and line.startswith(prefix):
+        results.append(line)
+        line = stream.readline()
 
     return results
 
@@ -37,6 +40,8 @@ def bsearch(prefix, filename):
 class _LinesAsBytes(object):
     """Maps byte indices to the file lines.
     The same line could be returned from many positions.
+    The order of the lines is preserved
+    and every line is accessible by an index.
     """
     def __init__(self, stream, stream_size):
         self.stream = stream
@@ -81,7 +86,7 @@ def _read_last_line(stream, stream_size):
 def main():
     options, args = _parse_args()
     filename, prefix = args
-    lines = bsearch(prefix, filename)
+    lines = bsearch(filename, prefix)
     for line in lines:
         print line,
 
