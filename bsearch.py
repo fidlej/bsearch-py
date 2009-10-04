@@ -12,6 +12,8 @@ import bisect
 
 def _parse_args():
     parser = optparse.OptionParser(__doc__)
+    parser.add_option("-i", "--ignore-case", action="store_true",
+            help="ignore case distinctions")
 
     options, args = parser.parse_args()
     if len(args) != 2:
@@ -19,22 +21,25 @@ def _parse_args():
 
     return options, args
 
-def bsearch(filename, prefix):
+def bsearch(filename, prefix, key=None):
     """Finds all lines that starts with the prefix.
     The given file should be already sorted.
     """
     stream_size = os.path.getsize(filename)
     with open(filename, "rb") as stream:
-        return _bsearch_stream(stream, stream_size, prefix)
+        return _bsearch_stream(stream, stream_size, prefix, key=key)
 
-def _bsearch_stream(stream, stream_size, prefix):
-    items = _LinesAsBytes(stream, stream_size)
+def _bsearch_stream(stream, stream_size, prefix, key=None):
+    if key is None:
+        key = lambda x: x
+    prefix = key(prefix)
+    items = _LinesAsBytes(stream, stream_size, key=key)
     index = bisect.bisect_left(items, prefix)
 
     results = []
-    line = items[index]
+    line = items.get_raw(index)
     # Empty prefix is also supported
-    while line and line.startswith(prefix):
+    while line and key(line).startswith(prefix):
         results.append(line)
         line = stream.readline()
 
@@ -49,9 +54,12 @@ class _LinesAsBytes(object):
     """
     NUM_FIRST_LINE_INDICES = 1
 
-    def __init__(self, stream, stream_size):
+    def __init__(self, stream, stream_size, key=None):
+        if key is None:
+            key = lambda x: x
         self.stream = stream
         self.stream_size = stream_size
+        self.key = key
 
     def __getitem__(self, pos):
         """Returns the first line after the position.
@@ -59,6 +67,11 @@ class _LinesAsBytes(object):
         When the position is from the last line, the last line is returned.
 
         The seek is moved after the read line.
+        """
+        return self.key(self.get_raw(pos))
+
+    def get_raw(self, pos):
+        """Returns the unconverted line for the given position.
         """
         assert pos >= 0
         pos -= self.NUM_FIRST_LINE_INDICES
@@ -92,10 +105,19 @@ def _read_last_line(stream, stream_size):
     stream.seek(0)
     return stream.readline()
 
+def _define_key(options):
+    """Returns a function that exctracts the key from a compared string.
+    Returns None when no special comparison is required.
+    """
+    if options.ignore_case:
+        return lambda x: x.lower()
+    return None
+
 def main():
     options, args = _parse_args()
     filename, prefix = args
-    lines = bsearch(filename, prefix)
+    key = _define_key(options)
+    lines = bsearch(filename, prefix, key=key)
     for line in lines:
         print line,
 

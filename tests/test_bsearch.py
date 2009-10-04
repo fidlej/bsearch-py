@@ -48,6 +48,13 @@ class Test(unittest.TestCase):
         self.assertEquals(DATA.splitlines(True),
                 bsearch._bsearch_stream(self.stream, self.stream_size, ""))
 
+    def test_bsearch_with_key(self):
+        key = lambda x: x.lower()
+        data = "\nAA line\nab line\nbb line\n"
+        stream = StringIO(data)
+        self.assertEquals(["AA line\n", "ab line\n"],
+                bsearch._bsearch_stream(stream, len(data), "A", key=key))
+
 if __name__ == "__main__":
     unittest.main()
 
