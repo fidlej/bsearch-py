@@ -56,7 +56,3 @@ class Test(unittest.TestCase):
         stream = StringIO(data)
         self.assertEquals(["AA line\n", "ab line\n"],
                 bsearch._bsearch_stream(stream, len(data), "A", key=key))
-
-
-if __name__ == "__main__":
-    unittest.main()
