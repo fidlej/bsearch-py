@@ -12,6 +12,8 @@ import bisect
 
 
 def _parse_args():
+    """Parses and returns (options, args).
+    """
     parser = optparse.OptionParser(__doc__)
     parser.add_option("-i", "--ignore-case", action="store_true",
             help="ignore case distinctions")
@@ -33,6 +35,8 @@ def bsearch(filename, prefix, key=None):
 
 
 def _bsearch_stream(stream, stream_size, prefix, key=None):
+    """Does the binary search on a stream with a known size.
+    """
     if key is None:
         key = lambda x: x
     prefix = key(prefix)
@@ -98,6 +102,8 @@ class _LinesAsBytes(object):
 
 
 def _read_last_line(stream, stream_size):
+    """Reads the last line from the stream.
+    """
     bufsize = 8192
     # Read by big steps and also from 0.
     for pos in xrange(stream_size - bufsize, -2 * bufsize, -2 * bufsize):
