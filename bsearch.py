@@ -47,9 +47,11 @@ class _LinesAsBytes(object):
     The order of the lines is preserved
     and every line is accessible by an index.
     """
+    NUM_FIRST_LINE_INDICES = 1
+
     def __init__(self, stream, stream_size):
         self.stream = stream
-        self.len = stream_size
+        self.stream_size = stream_size
 
     def __getitem__(self, pos):
         """Returns the first line after the position.
@@ -59,18 +61,21 @@ class _LinesAsBytes(object):
         The seek is moved after the read line.
         """
         assert pos >= 0
-        self.stream.seek(pos)
-        if pos > 0:
-            uncomplete = self.stream.readline()
+        pos -= self.NUM_FIRST_LINE_INDICES
+        if pos < 0:
+            self.stream.seek(0)
+            return self.stream.readline()
 
+        self.stream.seek(pos)
+        uncomplete = self.stream.readline()
         line = self.stream.readline()
         if not line:
-            line = _read_last_line(self.stream, self.len)
+            line = _read_last_line(self.stream, self.stream_size)
 
         return line
 
     def __len__(self):
-        return self.len
+        return self.stream_size + self.NUM_FIRST_LINE_INDICES
 
 def _read_last_line(stream, stream_size):
     bufsize = 8192
