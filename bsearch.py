@@ -72,6 +72,7 @@ class _LinesAsBytes(object):
 
     def get_raw(self, pos):
         """Returns the unconverted line for the given position.
+        It returns empty line when end-of-file was reached.
         """
         assert pos >= 0
         pos -= self.NUM_FIRST_LINE_INDICES
