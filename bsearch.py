@@ -10,6 +10,7 @@ import optparse
 import os.path
 import bisect
 
+
 def _parse_args():
     parser = optparse.OptionParser(__doc__)
     parser.add_option("-i", "--ignore-case", action="store_true",
@@ -21,6 +22,7 @@ def _parse_args():
 
     return options, args
 
+
 def bsearch(filename, prefix, key=None):
     """Finds all lines that starts with the prefix.
     The given file should be already sorted.
@@ -28,6 +30,7 @@ def bsearch(filename, prefix, key=None):
     stream_size = os.path.getsize(filename)
     with open(filename, "rb") as stream:
         return _bsearch_stream(stream, stream_size, prefix, key=key)
+
 
 def _bsearch_stream(stream, stream_size, prefix, key=None):
     if key is None:
@@ -93,6 +96,7 @@ class _LinesAsBytes(object):
         # the size is increased to keep some indices for the last line.
         return self.stream_size + self.NUM_FIRST_LINE_INDICES - 1
 
+
 def _read_last_line(stream, stream_size):
     bufsize = 8192
     # Read by big steps and also from 0.
@@ -108,6 +112,7 @@ def _read_last_line(stream, stream_size):
     stream.seek(0)
     return stream.readline()
 
+
 def _define_key(options):
     """Returns a function that exctracts the key from a compared string.
     Returns None when no special comparison is required.
@@ -115,6 +120,7 @@ def _define_key(options):
     if options.ignore_case:
         return lambda x: x.lower()
     return None
+
 
 def main():
     options, args = _parse_args()

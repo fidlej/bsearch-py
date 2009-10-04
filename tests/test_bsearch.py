@@ -11,7 +11,9 @@ AA second line
 B next line
 Z last line"""
 
+
 class Test(unittest.TestCase):
+
     def setUp(self):
         self.stream = StringIO(DATA)
         self.stream_size = len(DATA)
@@ -55,6 +57,6 @@ class Test(unittest.TestCase):
         self.assertEquals(["AA line\n", "ab line\n"],
                 bsearch._bsearch_stream(stream, len(data), "A", key=key))
 
+
 if __name__ == "__main__":
     unittest.main()
-
