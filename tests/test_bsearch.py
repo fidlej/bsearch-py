@@ -25,13 +25,13 @@ class Test(unittest.TestCase):
 
     def test_getitem(self):
         items = bsearch._LinesAsBytes(self.stream, self.stream_size)
-        self.assertEquals(self.stream_size + 1, len(items))
+        self.assertEquals(self.stream_size, len(items))
         self.assertEquals("A first line\n", items[0])
         self.assertEquals("AA second line\n", items[1])
         self.assertEquals("B next line\n", items[DATA.index("B")])
         self.assertEquals("Z last line", items[DATA.index("B") + 1])
         self.assertEquals("Z last line", items[self.stream_size -4])
-        self.assertEquals("Z last line", items[self.stream_size])
+        self.assertEquals("Z last line", items[self.stream_size -1])
 
     def test_get_after_empty_line(self):
         data = "\nA line\nB line\n"

@@ -62,7 +62,7 @@ class _LinesAsBytes(object):
         self.key = key
 
     def __getitem__(self, pos):
-        """Returns the first line after the position.
+        """Returns the first complete line after the position.
         When the position is zero, the first line is returned.
         When the position is from the last line, the last line is returned.
 
@@ -74,7 +74,7 @@ class _LinesAsBytes(object):
         """Returns the unconverted line for the given position.
         It returns empty line when end-of-file was reached.
         """
-        assert pos >= 0
+        assert 0 <= pos < self.stream_size
         pos -= self.NUM_FIRST_LINE_INDICES
         if pos < 0:
             self.stream.seek(0)
@@ -89,7 +89,9 @@ class _LinesAsBytes(object):
         return line
 
     def __len__(self):
-        return self.stream_size + self.NUM_FIRST_LINE_INDICES
+        # When increasing the NUM_FIRST_LINE_INDICES beyond 1,
+        # the size is increased to keep some indices for the last line.
+        return self.stream_size + self.NUM_FIRST_LINE_INDICES - 1
 
 def _read_last_line(stream, stream_size):
     bufsize = 8192
